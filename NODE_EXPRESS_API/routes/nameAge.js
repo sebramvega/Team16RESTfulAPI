@@ -8,9 +8,35 @@ const router = express.Router();
 const data = {};
 // all routes in here will start with /users
 router.get('/', (req, res) => {
-    console.log(data);
+    console.log('Grabbed Data');
+    const query = 'SELECT * FROM TestTable1';
+    db.query(query, (error, results) => {
+      if (error) {
+        console.error('Error retrieving data:', error);
+        return res.status(500).send('Error retrieving data');
+      }
+      console.log('Data retrieved successfully:');
+      res.send(results);
+  });
+});
 
-    res.send(data);
+router.get('/:id', (req,res) => {
+    const { id } = req.params;
+
+    const query = 'SELECT testName FROM TestTable1 WHERE id = ?';
+    db.query(query, id, (error, results) => {
+      if (error) {
+        console.error('Error retrieving data:', error);
+        return res.status(500).send('Error retrieving data');
+      }
+  
+      if (results.length === 0) {
+        return res.status(404).send('Name not found');
+      }
+  
+      console.log('Name retrieved successfully:', results[0].testName);
+      res.send(results[0].testName);
+    });
 });
 
 router.post('/', (req, res) => {
@@ -18,8 +44,9 @@ router.post('/', (req, res) => {
 
     const data = req.body;
 
+
     const query = 'INSERT INTO TestTable1 SET ?';
-    db.query(query, data, (error, results) => {
+    db.query(query, { ...data, id: uuidv4()}, (error, results) => {
         if (error) {
           console.error('Error inserting data:', error);
           return res.status(500).send('Error inserting data');
