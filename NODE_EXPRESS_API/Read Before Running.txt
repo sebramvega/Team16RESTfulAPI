@@ -1,0 +1,11 @@
+WITHIN THE DIRECTORY RUN THE COMMANDS into the terminal
+nmp install express
+nmp install -g nodemon
+npm install mysql
+nmp install express mysql
+
+test the api by entering 
+
+node index.js 
+
+in the command line. To end the connection press ctrl + c
