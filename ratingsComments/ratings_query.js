@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 // This script will contain all methods needed to read and write
-// entries of the ratings table. Require in main script.
+// entries of the ratings table. Require where needed.
 /////////////////////////////////////////////////////////////////////
 
 const app = require('./app')
