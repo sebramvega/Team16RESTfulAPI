@@ -1,0 +1,27 @@
+All of your API code should fit into one file that will be placed into the routes folder.
+
+
+// Including these line at the start of your code will allow for express funtions to work as well as routes
+    import express from 'express';
+    import db from '../db.js';
+    const router = express.Router();
+
+// import db... allows for your code to access the db.js file when you run the line
+    db.query(var (error, results) => {....})
+// and will automatically connect you with the database
+
+
+// make sure to end your code with the line
+    export default router;
+
+// when first creating and running your code for the first time make sure that within index.js you update the code with the lines
+    import filenameRoutes from './routes/filename.js';
+    app.use('/filename', filenameRoutes);
+
+//To run your local server and test your code,
+//open your temrminal into the directory NODE_EXPRESS_API
+// and run the line
+
+    npm start 
+
+//To end the connection when a crash or error oucrrs press ctrl + c then y for yes.
