@@ -4,7 +4,7 @@ const connection = require('./database');
 
 //Handle POST requests to '/api/books'
 router.post('/', (req, res) => {
-    const { primary_key, title, author, rating, voters, description, publisher, pages, genres, ISBN, language, date_text, dates, price } = req.body;
+    const { primary_key, title, author, rating, voters, description, publisher, pages, genres, ISBN, language, date_text, dates, price, numOfBooksSold  } = req.body;
 
     const book = {
       primary_key,
@@ -20,11 +20,12 @@ router.post('/', (req, res) => {
       language,
       date_text,
       dates,
-      price
+      price,
+      numOfBooksSold  
     };
 
     //Prepare a SQL query which inserts dummy book into the online database
-    const query = "INSERT INTO mytable SET `primary_key` = ?, `title` = ?, `author` = ?, `rating` = ?, `voters` = ?, `description` = ?, `publisher` = ?, `pages` = ?, `genres` = ?, `ISBN` = ?, `language` = ?, `date_text` = ?, `dates` = ?, `price` = ?";
+    const query = "INSERT INTO mytable SET `primary_key` = ?, `title` = ?, `author` = ?, `rating` = ?, `voters` = ?, `description` = ?, `publisher` = ?, `pages` = ?, `genres` = ?, `ISBN` = ?, `language` = ?, `date_text` = ?, `dates` = ?, `price` = ?, `numOfBooksSold` = ? ";
 
     const values = [
         book.primary_key,
@@ -40,7 +41,8 @@ router.post('/', (req, res) => {
         book.language,
         book.date_text,
         book.dates,
-        book.price
+        book.price,
+        book.numOfBooksSold
     ];
 
     //Execute the above mySQL query which adds dummy book to online atabase
