@@ -2,7 +2,7 @@ require('./db.js'); // Run connect to database script
 const app = require('./app.js'); //import app object
 const reviewQuery = require('./review_query.js'); //import ratings query object
 
-
+// Test average rating methods
 reviewQuery.UpdateAverageRating(14);
 
 
