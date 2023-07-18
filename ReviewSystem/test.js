@@ -5,7 +5,7 @@ const reviewQuery = require('./review_query.js'); //import ratings query object
 
 reviewQuery.UpdateAverageRating(14);
 
-/*
+
 // Get an existing test row from the reviews table 
 reviewQuery.getBookReviews(24223)
     .then((results) => {
@@ -22,10 +22,10 @@ var bookID = Math.trunc(Math.random() * 1000);
 var userID = Math.trunc(Math.random() * 1000);
 
 // Insert the test row into the reviews table 
-ratingsQuery.insertReview(bookID, userID, 3, "This is a test insert from Node.js")
+reviewQuery.insertReview(bookID, userID, 3, "This is a test insert from Node.js")
     .then((results) => {
         // Query the row we just inserted to prove it's in the database
-        ratingsQuery.getBookReviews(bookID)
+        reviewQuery.getBookReviews(bookID)
         .then((results) => {            
             console.log("\n==================== INSERT Query Success ======================")
             parseTestResult(results);        
@@ -37,11 +37,6 @@ ratingsQuery.insertReview(bookID, userID, 3, "This is a test insert from Node.js
     .catch((error) => {
         console.log(error);
 });
-
-
-
-
-*/  
 
 function parseTestResult(data) {
     console.log("Resulted in " + data.length + " rows.\n")
