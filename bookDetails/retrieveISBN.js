@@ -1,25 +1,34 @@
+const bodyParser = require('body-parser');
 const express = require('express');
-const router = express.Router();
 const connection = require('./database');
+const addBookRouter = require('./addBook');
+const retrieveISBNRouter = require('./retrieveISBN');
+const addAuthorRouter = require('./addAuthor');
+const retrieveBooksRouter = require('./retrieveBooks');
 
-router.get('/:isbn', (req, res) => {
-    const isbn = req.params.isbn;
-    const query = "SELECT * FROM bookTable WHERE ISBN = ?";
 
-    connection.query(query, [isbn], (error, results) => {
-        if (error) {
-            console.error('Error retrieving book details from ISBN: ', error);
-            res.sendStatus(500);
-        }
-        else {
-            if (results.length === 0) {
-                res.sendStatus(404);
-            }
-            else {
-                const book = results[0];
-                res.json(book);
-            }
-        }
-    });
-});
-module.exports = router;
+const app = express();
+const port = 3000;
+
+//middleware used to parse requests as JSON
+app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+    console.log('Request received:', req.method, req.url);
+    next();
+  });
+
+//root route used to test connection
+app.get('/', (req, res) => {
+    res.send('Hello, World!');
+  });
+
+//Following four lines of code mounts each router to their respective endpoints
+app.use('/api/books', addBookRouter);
+app.use('/api/books/:isbn', retrieveISBNRouter);
+app.use('/api/authors', addAuthorRouter);
+app.use('/api/books', retrieveBooksRouter);
+
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
