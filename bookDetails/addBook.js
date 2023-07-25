@@ -1,10 +1,19 @@
+/*
+An administrator must be able to create a book with the book ISBN, book name, book description, price, author,
+genre, publisher , year published and copies sold.
+o Logic: Given a Book’s info, add it to the system.
+o HTTP Request Type: POST
+o Parameters Sent: Book Object
+o Response Data: None
+*/
+
 const express = require('express');
 const router = express.Router();
 const connection = require('./database');
 
 //Handle POST requests to '/api/books'
 router.post('/', (req, res) => {
-    const { primary_key, title, author, rating, voters, description, publisher, pages, genres, ISBN, language, date_text, dates, price, numOfBooksSold  } = req.body;
+    const { primary_key, title, author, rating, voters, description, publisher, pages, genres, ISBN, language, date_text, dates, price } = req.body;
 
     const book = {
       primary_key,
@@ -20,12 +29,11 @@ router.post('/', (req, res) => {
       language,
       date_text,
       dates,
-      price,
-      numOfBooksSold  
+      price
     };
 
     //Prepare a SQL query which inserts dummy book into the online database
-    const query = "INSERT INTO mytable SET `primary_key` = ?, `title` = ?, `author` = ?, `rating` = ?, `voters` = ?, `description` = ?, `publisher` = ?, `pages` = ?, `genres` = ?, `ISBN` = ?, `language` = ?, `date_text` = ?, `dates` = ?, `price` = ?, `numOfBooksSold` = ? ";
+    const query = "INSERT INTO bookTable SET `primary_key` = ?, `title` = ?, `author` = ?, `rating` = ?, `voters` = ?, `description` = ?, `publisher` = ?, `pages` = ?, `genres` = ?, `ISBN` = ?, `language` = ?, `date_text` = ?, `dates` = ?, `price` = ?";
 
     const values = [
         book.primary_key,
@@ -41,8 +49,7 @@ router.post('/', (req, res) => {
         book.language,
         book.date_text,
         book.dates,
-        book.price,
-        book.numOfBooksSold
+        book.price
     ];
 
     //Execute the above mySQL query which adds dummy book to online atabase
