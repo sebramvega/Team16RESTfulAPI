@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mysql = require('mysql');
 
 const app = express();
 const port = 3000;
@@ -7,94 +8,94 @@ const port = 3000;
 // Middleware to parse request bodies as JSON
 app.use(bodyParser.json());
 
-// Array to store user profiles (replace with a database in a production environment)
-const users = [];
+const connection = mysql.createConnection({
+  host: 'db4free.net',
+  port: 3306,
+  user: 'group_16',
+  password: 'group_16',
+  database: 'group_16_db',
+});
 
-// Register a new user
+// Connect to the MySQL database and handle errors
+connection.connect((err) => {
+  if (err) {
+    console.error('Error connecting to MySQL database:', err);
+    return;
+  }
+  console.log('Connected to MySQL database');
+});
+
+// Create a User with username, password, and optional fields (email)
 app.post('/register', (req, res) => {
-  const { username, email, password } = req.body;
-  // Additional registration logic, e.g., password hashing and validation
+  console.log(req.body); // Log the request body
+  const { username, password, email } = req.body;
+  // Additional validation and logic can be added here before inserting the user into the database
 
-  const newUser = { username, email, password };
-  users.push(newUser);
+  const newUser = { username, password, email };
+  connection.query('INSERT INTO users SET ?', newUser, (err, result) => {
+    if (err) {
+      console.error('Error creating user:', err);
+      res.status(500).json({ message: 'Error creating user' });
+      return;
+    }
 
-  res.status(200).json({ message: 'Registration successful!' });
+    res.status(200).json({ message: 'User created successfully!' });
+  });
 });
 
-// Login a user
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-
-  const user = users.find((user) => user.username === username && user.password === password);
-  if (!user) {
-    res.status(401).json({ message: 'Invalid username or password.' });
-    return;
-  }
-
-  res.status(200).json({ message: 'Login successful!' });
-});
-
-// Get user profile
-app.get('/profile/:username', (req, res) => {
+// Retrieve a User Object and its fields by their username
+app.get('/users/:username', (req, res) => {
   const { username } = req.params;
 
-  const user = users.find((user) => user.username === username);
-  if (!user) {
-    res.status(404).json({ message: 'User not found.' });
-    return;
-  }
+  connection.query('SELECT * FROM users WHERE username = ?', [username], (err, results) => {
+    if (err) {
+      console.error('Error retrieving user:', err);
+      res.status(500).json({ message: 'Error retrieving user' });
+      return;
+    }
 
-  res.status(200).json(user);
+    const user = results[0];
+    if (!user) {
+      res.status(404).json({ message: 'User not found.' });
+      return;
+    }
+
+    res.status(200).json(user);
+  });
 });
 
-// Update user profile
-app.put('/profile/:username', (req, res) => {
+// Update the user and any of their fields except for mail
+app.put('/users/:username', (req, res) => {
   const { username } = req.params;
-  const { email, password } = req.body;
+  const { password, email } = req.body;
 
-  const user = users.find((user) => user.username === username);
-  if (!user) {
-    res.status(404).json({ message: 'User not found.' });
-    return;
-  }
+  const updatedUser = { password, email };
+  connection.query('UPDATE users SET ? WHERE username = ?', [updatedUser, username], (err, result) => {
+    if (err) {
+      console.error('Error updating user:', err);
+      res.status(500).json({ message: 'Error updating user' });
+      return;
+    }
 
-  user.email = email;
-  user.password = password;
-  // Additional profile information update logic
-
-  res.status(200).json({ message: 'Profile updated successfully!' });
+    res.status(200).json({ message: 'User updated successfully!' });
+  });
 });
 
-// Reset user password
-app.put('/reset-password/:username', (req, res) => {
+// Create Credit Card that belongs to a User
+app.post('/users/:username/credit-cards', (req, res) => {
   const { username } = req.params;
-  const { password } = req.body;
+  const { card_number, card_holder, expiration_date } = req.body;
 
-  const user = users.find((user) => user.username === username);
-  if (!user) {
-    res.status(404).json({ message: 'User not found.' });
-    return;
-  }
+  const newCreditCard = { username, card_number, card_holder, expiration_date };
+  connection.query('INSERT INTO credit_cards SET ?', newCreditCard, (err, result) => {
+    if (err) {
+      console.error('Error creating credit card:', err);
+      res.status(500).json({ message: 'Error creating credit card' });
+      return;
+    }
 
-  user.password = password;
-  // Additional password reset logic
-
-  res.status(200).json({ message: 'Password reset successful!' });
-});
-
-// Delete user account
-app.delete('/delete-account/:username', (req, res) => {
-  const { username } = req.params;
-
-  const userIndex = users.findIndex((user) => user.username === username);
-  if (userIndex === -1) {
-    res.status(404).json({ message: 'User not found.' });
-    return;
-  }
-
-  users.splice(userIndex, 1);
-
-  res.status(200).json({ message: 'Account deleted successfully!' });
+    res.status(200).json({ message: 'Credit card created successfully!' });
+  });
 });
 
 // Start the server
